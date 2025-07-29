@@ -1,7 +1,8 @@
-import LovablePromptsGenerator from '@/components/LovablePromptsGenerator';
+
+import ZynxDeejaPlatform from '@/components/ZynxDeejaPlatform';
 
 const Index = () => {
-  return <LovablePromptsGenerator />;
+  return <ZynxDeejaPlatform />;
 };
 
 export default Index;
