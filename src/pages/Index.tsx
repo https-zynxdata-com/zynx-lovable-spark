@@ -1,7 +1,8 @@
 
+import React from 'react';
 import ZynxDeejaPlatform from '@/components/ZynxDeejaPlatform';
 
-const Index = () => {
+const Index: React.FC = () => {
   return <ZynxDeejaPlatform />;
 };
 
