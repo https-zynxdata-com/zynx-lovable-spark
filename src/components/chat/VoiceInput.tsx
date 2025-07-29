@@ -7,12 +7,12 @@ import { useToast } from '@/hooks/use-toast';
 // TypeScript declarations for Web Speech API
 declare global {
   interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
+    SpeechRecognition: new () => ISpeechRecognition;
+    webkitSpeechRecognition: new () => ISpeechRecognition;
   }
 }
 
-interface SpeechRecognition extends EventTarget {
+interface ISpeechRecognition extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
@@ -58,7 +58,7 @@ interface VoiceInputProps {
 export function VoiceInput({ onVoiceInput }: VoiceInputProps) {
   const { toast } = useToast();
   const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<ISpeechRecognition | null>(null);
 
   const startListening = useCallback(() => {
     if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
