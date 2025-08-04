@@ -16,29 +16,30 @@ export default defineConfig(async ({ mode }) => {
 
   return {
     plugins,
-  server: {
-    host: "::",
-    port: 8080,
-    open: true
-  },
-  build: {
-    target: 'esnext',
-    minify: 'terser',
-    sourcemap: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'lucide-icons': ['lucide-react']
+    server: {
+      host: "::",
+      port: 8080,
+      open: true
+    },
+    build: {
+      target: 'esnext',
+      minify: 'terser',
+      sourcemap: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'lucide-icons': ['lucide-react']
+          }
         }
       }
-    }
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'lucide-react']
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
     },
-  },
-}))
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'lucide-react']
+    },
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
+    },
+  }
+})
