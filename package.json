@@ -1,115 +1,83 @@
 {
-  "name": "zynx-lovable-prompts-generator",
-  "version": "1.0.0",
-  "description": "AI-powered prompt generator for Lovable.AI - Create perfect prompts for images, icons, and UI components",
-  "author": "Zynx <zynx@zynxdata.com>",
-  "license": "MIT",
-  "keywords": [
-    "lovable.ai",
-    "prompts",
-    "generator",
-    "ai",
-    "ui",
-    "react",
-    "lucide-icons",
-    "tailwind"
-  ],
-  "homepage": "https://github.com/zynx-ai/lovable-prompts-generator",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/zynx-ai/lovable-prompts-generator.git"
-  },
-  "bugs": {
-    "url": "https://github.com/zynx-ai/lovable-prompts-generator/issues"
-  },
+  "name": "vite_react_shadcn_ts",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "test": "vitest",
-    "test:e2e": "playwright test",
-    "test:coverage": "vitest --coverage",
-    "analyze": "npm run build && npx vite-bundle-analyzer dist",
-    "lighthouse": "lhci autorun",
-    "size-check": "size-limit",
-    "encoding-check": "npx iconv-cli check src/**/*.{js,jsx,ts,tsx,md}",
-    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
-    "format": "prettier --write src/**/*.{js,jsx,ts,tsx,json,css,md}",
-    "type-check": "tsc --noEmit"
+    "build:dev": "vite build --mode development",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "lucide-react": "^0.300.0"
+    "@hookform/resolvers": "^3.9.0",
+    "@radix-ui/react-accordion": "^1.2.0",
+    "@radix-ui/react-alert-dialog": "^1.1.1",
+    "@radix-ui/react-aspect-ratio": "^1.1.0",
+    "@radix-ui/react-avatar": "^1.1.0",
+    "@radix-ui/react-checkbox": "^1.1.1",
+    "@radix-ui/react-collapsible": "^1.1.0",
+    "@radix-ui/react-context-menu": "^2.2.1",
+    "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-dropdown-menu": "^2.1.1",
+    "@radix-ui/react-hover-card": "^1.1.1",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-menubar": "^1.1.1",
+    "@radix-ui/react-navigation-menu": "^1.2.0",
+    "@radix-ui/react-popover": "^1.1.1",
+    "@radix-ui/react-progress": "^1.1.0",
+    "@radix-ui/react-radio-group": "^1.2.0",
+    "@radix-ui/react-scroll-area": "^1.1.0",
+    "@radix-ui/react-select": "^2.1.1",
+    "@radix-ui/react-separator": "^1.1.0",
+    "@radix-ui/react-slider": "^1.2.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-switch": "^1.1.0",
+    "@radix-ui/react-tabs": "^1.1.0",
+    "@radix-ui/react-toast": "^1.2.1",
+    "@radix-ui/react-toggle": "^1.1.0",
+    "@radix-ui/react-toggle-group": "^1.1.0",
+    "@radix-ui/react-tooltip": "^1.1.4",
+    "@tanstack/react-query": "^5.56.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.0.0",
+    "date-fns": "^3.6.0",
+    "embla-carousel-react": "^8.3.0",
+    "input-otp": "^1.2.4",
+    "lucide-react": "^0.462.0",
+    "next-themes": "^0.3.0",
+    "react": "^18.3.1",
+    "react-day-picker": "^8.10.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.53.0",
+    "react-resizable-panels": "^2.1.3",
+    "react-router-dom": "^6.26.2",
+    "recharts": "^2.12.7",
+    "sonner": "^1.5.0",
+    "tailwind-merge": "^2.5.2",
+    "tailwindcss-animate": "^1.0.7",
+    "vaul": "^0.9.3",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.0",
-    "@testing-library/jest-dom": "^6.1.4",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^14.5.1",
-    "@types/react": "^18.2.45",
-    "@types/react-dom": "^18.2.18",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
-    "@vitejs/plugin-react": "^4.2.0",
-    "autoprefixer": "^10.4.16",
-    "eslint": "^8.55.0",
-    "eslint-plugin-jsx-a11y": "^6.8.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "jsdom": "^23.0.1",
-    "postcss": "^8.4.32",
-    "prettier": "^3.1.1",
-    "size-limit": "^11.0.1",
-    "@size-limit/preset-app": "^11.0.1",
-    "tailwindcss": "^3.3.6",
-    "typescript": "^5.3.3",
-    "vite": "^5.0.8",
-    "vite-bundle-analyzer": "^0.7.0",
-    "vitest": "^1.0.4",
-    "@vitest/coverage-v8": "^1.0.4",
-    "@lhci/cli": "^0.12.0",
-    "iconv-cli": "^1.2.0"
-  },
-  "size-limit": [
-    {
-      "name": "Main Bundle",
-      "path": "dist/assets/*.js",
-      "limit": "180 kB",
-      "gzip": true
-    },
-    {
-      "name": "CSS Bundle", 
-      "path": "dist/assets/*.css",
-      "limit": "50 kB",
-      "gzip": true
-    }
-  ],
-  "lighthouse": {
-    "ci": {
-      "collect": {
-        "url": ["http://localhost:5173"],
-        "numberOfRuns": 3
-      },
-      "assert": {
-        "assertions": {
-          "categories:performance": ["error", {"minScore": 0.9}],
-          "categories:accessibility": ["error", {"minScore": 0.9}],
-          "categories:best-practices": ["error", {"minScore": 0.9}],
-          "categories:seo": ["error", {"minScore": 0.8}]
-        }
-      }
-    }
-  },
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead",
-    "not ie 11"
-  ]
+    "@eslint/js": "^9.9.0",
+    "@tailwindcss/typography": "^0.5.15",
+    "@types/node": "^22.5.5",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.9.0",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
+    "eslint-plugin-react-refresh": "^0.4.9",
+    "globals": "^15.9.0",
+    "lovable-tagger": "^1.1.7",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.11",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^8.0.1",
+    "vite": "^5.4.1"
+  }
 }
