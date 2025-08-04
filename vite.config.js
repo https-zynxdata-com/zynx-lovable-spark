@@ -1,13 +1,21 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { componentTagger } from "lovable-tagger"
 
-export default defineConfig(({ mode }) => ({
-  plugins: [
-    react(),
-    mode === 'development' && componentTagger(),
-  ].filter(Boolean),
+export default defineConfig(async ({ mode }) => {
+  const plugins = [react()]
+  
+  if (mode === 'development') {
+    try {
+      const { componentTagger } = await import('lovable-tagger')
+      plugins.push(componentTagger())
+    } catch (error) {
+      console.warn('lovable-tagger not available in development mode')
+    }
+  }
+
+  return {
+    plugins,
   server: {
     host: "::",
     port: 8080,
