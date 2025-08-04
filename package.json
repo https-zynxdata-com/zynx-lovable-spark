@@ -39,7 +39,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "lovable-tagger": "^1.1.9",
     "lucide-react": "^0.300.0",
+    "path": "^0.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
