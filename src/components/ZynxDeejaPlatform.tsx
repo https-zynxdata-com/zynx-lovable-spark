@@ -37,6 +37,7 @@ import { PromptGenerator } from './chat/PromptGenerator';
 import { EmotionPanel } from './chat/EmotionPanel';
 import { useSecureConversations } from '@/hooks/useSecureConversations';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface ChatMessage {
   id: string;
@@ -50,7 +51,7 @@ export interface ChatMessage {
 
 export default function ZynxDeejaPlatform() {
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const { 
     currentConversation, 
     addMessage, 
@@ -73,17 +74,10 @@ export default function ZynxDeejaPlatform() {
   const messages = currentConversation?.messages || [];
 
   useEffect(() => {
-    // Load theme from localStorage
-    const savedTheme = localStorage.getItem('zynx-deeja-theme');
-    if (savedTheme) {
-      setDarkMode(savedTheme === 'dark');
-    }
+    // Get theme preference from system or default to light
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setDarkMode(prefersDark);
   }, []);
-
-  useEffect(() => {
-    // Save theme to localStorage
-    localStorage.setItem('zynx-deeja-theme', darkMode ? 'dark' : 'light');
-  }, [darkMode]);
 
   useEffect(() => {
     // Apply theme
@@ -123,25 +117,40 @@ export default function ZynxDeejaPlatform() {
     
     playNotificationSound();
     setIsLoading(true);
+    const userMessage = inputMessage;
     setInputMessage('');
     
     try {
       // Add user message to secure storage
-      await addMessage(inputMessage, 'user');
+      await addMessage(userMessage, 'user');
       
-      // Simulate AI response (replace with real AI service later)
-      const aiResponse = `This is a mock AI response to: "${inputMessage}". In production, this would connect to a real AI service.`;
-      
+      // Get AI response from secure edge function
+      const { data, error } = await supabase.functions.invoke('ai-chat', {
+        body: { 
+          message: userMessage,
+          conversationId: currentConversation?.id 
+        },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      if (error) {
+        console.error('AI chat error:', error);
+        throw new Error('Failed to get AI response');
+      }
+
       // Add AI message to secure storage
-      await addMessage(aiResponse, 'ai', {
-        emotion: 'neutral',
-        reasoning: 'Mock reasoning for demo purposes'
+      await addMessage(data.response, 'ai', {
+        emotion: data.emotion || 'neutral',
+        reasoning: data.reasoning || 'AI analysis'
       });
       
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Send message error:', error);
       toast({
         title: "เกิดข้อผิดพลาด",
-        description: "ไม่สามารถส่งข้อความได้ กรุณาลองใหม่อีกครั้ง",
+        description: error.message || "ไม่สามารถส่งข้อความได้ กรุณาลองใหม่อีกครั้ง",
         variant: "destructive",
       });
     } finally {
@@ -160,13 +169,15 @@ export default function ZynxDeejaPlatform() {
     setInputMessage(text);
   };
 
-  const handleFileUpload = (file: File) => {
-    const message = `[ไฟล์ที่อัปโหลด: ${file.name}]`;
+  const handleFileUpload = (file: File, url?: string) => {
+    const message = url 
+      ? `[ไฟล์ที่อัปโหลดอย่างปลอดภัย: ${file.name}]\nURL: ${url}`
+      : `[ไฟล์ที่อัปโหลด: ${file.name}]`;
     setInputMessage(prev => prev + message);
     
     toast({
       title: "อัปโหลดไฟล์สำเร็จ",
-      description: `ไฟล์ ${file.name} ถูกเพิ่มเข้าข้อความแล้ว`,
+      description: `ไฟล์ ${file.name} ถูกอัปโหลดอย่างปลอดภัยแล้ว`,
     });
   };
 

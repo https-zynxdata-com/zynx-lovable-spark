@@ -3,51 +3,33 @@ import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Upload, FileText, Image, Archive } from 'lucide-react';
+import { useSecureFileUpload } from '@/hooks/useSecureFileUpload';
 
 interface FileUploadProps {
-  onFileUpload: (file: File) => void;
+  onFileUpload: (file: File, url?: string) => void;
 }
 
 export function FileUpload({ onFileUpload }: FileUploadProps) {
   const { toast } = useToast();
+  const { uploadFile, uploading } = useSecureFileUpload();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const allowedTypes = [
-      'text/plain',
-      'text/markdown',
-      'application/json',
-      'text/csv',
-      'image/png',
-      'image/jpeg',
-      'image/gif',
-      'image/webp',
-      'application/zip'
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
+    // Upload file securely through edge function
+    const result = await uploadFile(file);
+    
+    if (result.success && result.url) {
+      onFileUpload(file, result.url);
+    } else {
       toast({
-        title: "ไฟล์ไม่รองรับ",
-        description: "กรุณาเลือกไฟล์ประเภท txt, md, json, csv, รูปภาพ, หรือ zip",
+        title: "Upload Failed",
+        description: result.error || "Failed to upload file securely",
         variant: "destructive",
       });
-      return;
     }
-
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    if (file.size > maxSize) {
-      toast({
-        title: "ไฟล์ใหญ่เกินไป",
-        description: "กรุณาเลือกไฟล์ที่มีขนาดไม่เกิน 10MB",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    onFileUpload(file);
     
     // Reset input
     if (fileInputRef.current) {
@@ -74,8 +56,10 @@ export function FileUpload({ onFileUpload }: FileUploadProps) {
         variant="outline"
         size="sm"
         onClick={() => fileInputRef.current?.click()}
+        disabled={uploading}
       >
         <Upload className="w-4 h-4" />
+        {uploading && <span className="ml-1">...</span>}
       </Button>
     </>
   );
