@@ -35,9 +35,8 @@ import { VoiceInput } from './chat/VoiceInput';
 import { FileUpload } from './chat/FileUpload';
 import { PromptGenerator } from './chat/PromptGenerator';
 import { EmotionPanel } from './chat/EmotionPanel';
-import { mockAIService } from '../services/mockAIService';
-import { mockEmotionService } from '../services/mockEmotionService';
-import { mockMemoryService } from '../services/mockMemoryService';
+import { useSecureConversations } from '@/hooks/useSecureConversations';
+import { useAuth } from '@/hooks/useAuth';
 
 export interface ChatMessage {
   id: string;
@@ -51,7 +50,14 @@ export interface ChatMessage {
 
 export default function ZynxDeejaPlatform() {
   const { toast } = useToast();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const { user } = useAuth();
+  const { 
+    currentConversation, 
+    addMessage, 
+    createConversation,
+    loading: conversationsLoading 
+  } = useSecureConversations();
+  
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -60,37 +66,24 @@ export default function ZynxDeejaPlatform() {
   const [currentEmotion, setCurrentEmotion] = useState<{ emotion: string; confidence: number } | null>(null);
   const [ethicsFlag, setEthicsFlag] = useState(false);
   const [showPromptGenerator, setShowPromptGenerator] = useState(false);
-  const [apiKey, setApiKey] = useState('');
-  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  const messages = currentConversation?.messages || [];
+
   useEffect(() => {
-    // Load from localStorage
-    const savedMessages = localStorage.getItem('zynx-deeja-messages');
+    // Load theme from localStorage
     const savedTheme = localStorage.getItem('zynx-deeja-theme');
-    const savedApiKey = localStorage.getItem('zynx-deeja-api-key');
-    
-    if (savedMessages) {
-      setMessages(JSON.parse(savedMessages));
-    }
     if (savedTheme) {
       setDarkMode(savedTheme === 'dark');
-    }
-    if (savedApiKey) {
-      setApiKey(savedApiKey);
     }
   }, []);
 
   useEffect(() => {
-    // Save to localStorage
-    localStorage.setItem('zynx-deeja-messages', JSON.stringify(messages));
+    // Save theme to localStorage
     localStorage.setItem('zynx-deeja-theme', darkMode ? 'dark' : 'light');
-    if (apiKey) {
-      localStorage.setItem('zynx-deeja-api-key', apiKey);
-    }
-  }, [messages, darkMode, apiKey]);
+  }, [darkMode]);
 
   useEffect(() => {
     // Apply theme
@@ -129,41 +122,21 @@ export default function ZynxDeejaPlatform() {
     if (!inputMessage.trim()) return;
     
     playNotificationSound();
-    
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      content: inputMessage,
-      sender: 'user',
-      timestamp: new Date(),
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setInputMessage('');
     setIsLoading(true);
-
+    setInputMessage('');
+    
     try {
-      // Analyze emotion
-      const emotionResult = await mockEmotionService.analyzeEmotion(inputMessage);
-      setCurrentEmotion(emotionResult);
-      setEthicsFlag(emotionResult.confidence > 0.8 && ['anger', 'sadness', 'fear'].includes(emotionResult.emotion));
-
-      // Get AI response
-      const aiResponse = await mockAIService.generateResponse(inputMessage, conversationMode);
+      // Add user message to secure storage
+      await addMessage(inputMessage, 'user');
       
-      const aiMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        content: aiResponse.content,
-        sender: 'ai',
-        timestamp: new Date(),
-        emotion: emotionResult.emotion,
-        reasoning: aiResponse.reasoning,
-        sources: aiResponse.sources,
-      };
-
-      setMessages(prev => [...prev, aiMessage]);
+      // Simulate AI response (replace with real AI service later)
+      const aiResponse = `This is a mock AI response to: "${inputMessage}". In production, this would connect to a real AI service.`;
       
-      // Store in memory service
-      await mockMemoryService.storeConversation(userMessage, aiMessage);
+      // Add AI message to secure storage
+      await addMessage(aiResponse, 'ai', {
+        emotion: 'neutral',
+        reasoning: 'Mock reasoning for demo purposes'
+      });
       
     } catch (error) {
       toast({
@@ -213,18 +186,15 @@ export default function ZynxDeejaPlatform() {
     });
   };
 
-  const handleMeetDeeja = () => {
+  const handleMeetDeeja = async () => {
     setShowWelcome(false);
     const welcomeMessage = `สวัสดี! ฉันคือ Deeja 🤖 ผู้ช่วย AI ที่พร้อมช่วยเหลือคุณในทุกเรื่อง\n\nฉันสามารถช่วยคุณได้ในด้านต่างๆ เช่น:\n• การเขียนโปรแกรม\n• การวิเคราะห์ข้อมูล\n• การสร้างเนื้อหา\n• การตอบคำถาม\n• และอื่นๆ อีกมากมาย\n\nลองถามอะไรฉันสิ!`;
     
-    const aiMessage: ChatMessage = {
-      id: Date.now().toString(),
-      content: welcomeMessage,
-      sender: 'ai',
-      timestamp: new Date(),
-    };
-    
-    setMessages([aiMessage]);
+    // Create new conversation if none exists and add welcome message
+    if (!currentConversation) {
+      await createConversation('Welcome Chat');
+    }
+    await addMessage(welcomeMessage, 'ai');
   };
 
   const handleSummarizeConversation = async () => {
@@ -238,16 +208,9 @@ export default function ZynxDeejaPlatform() {
 
     setIsLoading(true);
     try {
-      const summary = await mockAIService.summarizeConversation(messages);
+      const summary = `📋 **สรุปบทสนทนา:**\n\nในบทสนทนานี้มีข้อความทั้งหมด ${messages.length} ข้อความ\nเริ่มต้นเมื่อ: ${messages[0]?.timestamp.toLocaleString()}\nหัวข้อหลัก: การสนทนาทั่วไป\n\n*หมายเหตุ: นี่เป็นสรุปแบบ Mock สำหรับการทดสอบ*`;
       
-      const summaryMessage: ChatMessage = {
-        id: Date.now().toString(),
-        content: `📋 **สรุปบทสนทนา:**\n\n${summary}`,
-        sender: 'ai',
-        timestamp: new Date(),
-      };
-      
-      setMessages(prev => [...prev, summaryMessage]);
+      await addMessage(summary, 'ai');
     } catch (error) {
       toast({
         title: "เกิดข้อผิดพลาด",
@@ -322,43 +285,12 @@ export default function ZynxDeejaPlatform() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setShowApiKeyInput(!showApiKeyInput)}
-                >
-                  <Settings className="w-4 h-4" />
-                </Button>
-                
-                <Button
-                  variant="ghost"
-                  size="sm"
                   onClick={() => setDarkMode(!darkMode)}
                 >
                   {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                 </Button>
               </div>
             </div>
-            
-            {showApiKeyInput && (
-              <div className="mt-4 p-4 bg-secondary/20 rounded-lg border border-border">
-                <div className="flex items-center space-x-2">
-                  <Input
-                    type="password"
-                    placeholder="ใส่ API Key (Demo Mode - ไม่จำเป็นต้องใส่)"
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                    className="flex-1"
-                  />
-                  <Button
-                    onClick={() => setShowApiKeyInput(false)}
-                    variant="secondary"
-                  >
-                    บันทึก
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground mt-2">
-                  * ในโหมด Demo นี้ ระบบจะใช้ Mock Data ไม่จำเป็นต้องใส่ API Key จริง
-                </p>
-              </div>
-            )}
           </div>
         </div>
 
