@@ -20,30 +20,37 @@ interface WelcomeBannerProps {
 
 export function WelcomeBanner({ onMeetDeeja }: WelcomeBannerProps) {
   return (
-    <Card className="bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 border-primary/20 backdrop-blur-sm">
-      <CardContent className="p-6">
-        <div className="text-center space-y-6">
-          <div className="flex items-center justify-center space-x-3">
+    <Card className="bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border border-blue-500/20 backdrop-blur-sm shadow-2xl">
+      <CardContent className="p-8">
+        <div className="text-center space-y-8">
+          <div className="flex items-center justify-center space-x-6">
             <div className="relative">
-              <div className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
-                <Brain className="w-8 h-8 text-white" />
+              <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-xl transform hover:scale-105 transition-transform duration-300">
+                <span className="text-white font-bold text-2xl">Z</span>
               </div>
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                <Sparkles className="w-3 h-3 text-white" />
+              <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+            </div>
+            <div className="h-16 w-px bg-gradient-to-b from-blue-500/50 to-pink-500/50"></div>
+            <div className="relative">
+              <div className="w-20 h-20 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center shadow-xl">
+                <Brain className="w-10 h-10 text-white" />
               </div>
             </div>
             <div className="text-left">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Zynx+Deeja
+              <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Zynx × Deeja
               </h2>
-              <p className="text-lg text-muted-foreground">AGI Platform</p>
+              <p className="text-xl text-muted-foreground">Advanced AGI Platform</p>
             </div>
           </div>
           
-          <div className="max-w-2xl mx-auto">
-            <p className="text-lg text-muted-foreground mb-4">
-              ยินดีต้อนรับสู่แพลตฟอร์ม AI ที่ครบครันที่สุด พร้อมความสามารถในการวิเคราะห์อารมณ์ 
-              การประมวลผลแบบหลายรูปแบบ และระบบหน่วยความจำอัจฉริยะ
+          <div className="max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
+              ยินดีต้อนรับสู่ <span className="font-semibold bg-gradient-to-r from-blue-600 to-pink-600 bg-clip-text text-transparent">Zynx Technology</span> 
+              แพลตฟอร์ม AGI ที่ครบครันที่สุด พร้อม <span className="font-semibold text-primary">Deeja AI Assistant</span> 
+              ที่มีความสามารถในการวิเคราะห์อารมณ์ การประมวลผลแบบหลายรูปแบบ และระบบหน่วยความจำอัจฉริยะ
             </p>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -65,19 +72,24 @@ export function WelcomeBanner({ onMeetDeeja }: WelcomeBannerProps) {
               </div>
             </div>
             
-            <div className="flex flex-wrap justify-center gap-2 mb-6">
-              <Badge variant="secondary">Glassmorphism UI</Badge>
-              <Badge variant="secondary">Dark/Light Mode</Badge>
-              <Badge variant="secondary">Multi-modal Input</Badge>
-              <Badge variant="secondary">Emotion Analysis</Badge>
-              <Badge variant="secondary">Memory System</Badge>
-              <Badge variant="secondary">Prompt Generator</Badge>
+            <div className="flex flex-wrap justify-center gap-3 mb-8">
+              <Badge className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-500/30 text-blue-700 dark:text-blue-300 shadow-md">
+                Zynx Technology
+              </Badge>
+              <Badge className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-500/30 text-purple-700 dark:text-purple-300 shadow-md">
+                Deeja AI Assistant
+              </Badge>
+              <Badge variant="secondary" className="shadow-md">Multi-modal Input</Badge>
+              <Badge variant="secondary" className="shadow-md">Emotion Analysis</Badge>
+              <Badge variant="secondary" className="shadow-md">Memory System</Badge>
+              <Badge variant="secondary" className="shadow-md">Voice Recognition</Badge>
             </div>
             
             <Button 
               onClick={onMeetDeeja}
-              className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white px-8 py-3 text-lg font-semibold"
+              className="bg-gradient-to-r from-blue-600 to-pink-600 hover:from-blue-700 hover:to-pink-700 text-white px-10 py-4 text-xl font-bold rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-300"
             >
+              <Zap className="w-5 h-5 mr-2" />
               Meet Deeja! 🚀
             </Button>
           </div>
